@@ -9,10 +9,14 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import ds.gae.CarRentalModel;
+import ds.gae.EMF;
 import ds.gae.entities.Car;
 import ds.gae.entities.CarRentalCompany;
 import ds.gae.entities.CarType;
@@ -23,7 +27,7 @@ public class CarRentalServletContextListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent arg0) {
 		// This will be invoked as part of a warming request, 
 		// or the first user request if no warming request was invoked.
-						
+		
 		// check if dummy data is available, and add if necessary
 		if(!isDummyDataAvailable()) {
 			addDummyData();
@@ -32,9 +36,14 @@ public class CarRentalServletContextListener implements ServletContextListener {
 	
 	private boolean isDummyDataAvailable() {
 		// If the Hertz car rental company is in the datastore, we assume the dummy data is available
-
-		// FIXME: use persistence instead
-		return CarRentalModel.get().CRCS.containsKey("Hertz");
+		EntityManager em = EMF.get().createEntityManager();
+		try{
+			Query q = em.createQuery("SELECT c FROM CarRentalCompany c" );
+			return q.getResultList().size() > 0;
+		}
+		finally{
+			em.close();
+		}
 
 	}
 	
@@ -45,25 +54,25 @@ public class CarRentalServletContextListener implements ServletContextListener {
 	
 	private void loadRental(String name, String datafile) {
 		Logger.getLogger(CarRentalServletContextListener.class.getName()).log(Level.INFO, "loading {0} from file {1}", new Object[]{name, datafile});
-        try {
-        	
-            Set<Car> cars = loadData(name, datafile);
-            CarRentalCompany company = new CarRentalCompany(name, cars);
-            
-    		// FIXME: use persistence instead
-            CarRentalModel.get().CRCS.put(name, company);
+		EntityManager em = EMF.get().createEntityManager();
+		try {
+            Set<CarType> carTypes = loadData(name, datafile);
+            CarRentalCompany company = new CarRentalCompany(name, carTypes);
+            em.persist(company);          
 
         } catch (NumberFormatException ex) {
             Logger.getLogger(CarRentalServletContextListener.class.getName()).log(Level.SEVERE, "bad file", ex);
         } catch (IOException ex) {
             Logger.getLogger(CarRentalServletContextListener.class.getName()).log(Level.SEVERE, null, ex);
         }
+		finally{
+			em.close();
+		}
 	}
 	
-	public static Set<Car> loadData(String name, String datafile) throws NumberFormatException, IOException {
-		// FIXME: adapt the implementation of this method to your entity structure
-		
-		Set<Car> cars = new HashSet<Car>();
+	
+	public static Set<CarType> loadData(String name, String datafile) throws NumberFormatException, IOException {
+		Set<CarType> carTypes = new HashSet<CarType>();
 		int carId = 1;
 
 		//open file from jar
@@ -84,13 +93,14 @@ public class CarRentalServletContextListener implements ServletContextListener {
 					Float.parseFloat(csvReader.nextToken()),
 					Double.parseDouble(csvReader.nextToken()),
 					Boolean.parseBoolean(csvReader.nextToken()));
+			carTypes.add(type);
 			//create N new cars with given type, where N is the 5th field
 			for (int i = Integer.parseInt(csvReader.nextToken()); i > 0; i--) {
-				cars.add(new Car(carId++, type));
+				type.addCar(new Car(carId++, type.getName()));
 			}
 		}
 
-		return cars;
+		return carTypes;
 	}
 
 	@Override

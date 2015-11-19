@@ -1,10 +1,16 @@
 package ds.gae.entities;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Quote {
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
+public class Quote implements Serializable {
+	
+	@Temporal(TemporalType.DATE)
     private Date startDate;
+	@Temporal(TemporalType.DATE)
     private Date endDate;
     private String carRenter;
     private String rentalCompany;
@@ -22,6 +28,10 @@ public class Quote {
         this.rentalCompany = rentalCompany;
         this.carType = carType;
         this.rentalPrice = rentalPrice;
+    }
+    
+    public Quote(){
+    	
     }
 
     public Date getStartDate() {

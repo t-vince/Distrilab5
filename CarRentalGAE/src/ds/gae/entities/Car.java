@@ -4,22 +4,46 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Car {
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+import com.google.appengine.api.datastore.Key;
+
+@Entity
+public class Car {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Key key;
+    
     private int id;
-    private CarType type;
+    
+    
+    private String type;
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Reservation> reservations;
 
     /***************
      * CONSTRUCTOR *
      ***************/
     
-    public Car(int uid, CarType type) {
+    public Car(int uid, String type) {
     	this.id = uid;
         this.type = type;
         this.reservations = new HashSet<Reservation>();
     }
 
+    /******
+     * KEY *
+     ******/
+    
+    public Key getKey() {
+    	return key;
+    }
+    
     /******
      * ID *
      ******/
@@ -32,7 +56,7 @@ public class Car {
      * CAR TYPE *
      ************/
     
-    public CarType getType() {
+    public String getType() {
         return type;
     }
 

@@ -3,9 +3,11 @@ package ds.gae.entities;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+@MappedSuperclass
 public class Quote implements Serializable {
 	
 	@Temporal(TemporalType.DATE)
@@ -28,10 +30,6 @@ public class Quote implements Serializable {
         this.rentalCompany = rentalCompany;
         this.carType = carType;
         this.rentalPrice = rentalPrice;
-    }
-    
-    public Quote(){
-    	
     }
 
     public Date getStartDate() {

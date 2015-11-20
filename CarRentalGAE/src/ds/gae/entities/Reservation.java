@@ -26,13 +26,13 @@ public class Reservation extends Quote {
         this.carId = carId;
     }
     
-    public Reservation() {
-    	
-    }
-    
     /******
      * ID *
      ******/
+    
+    public Key getId() {
+    	return this.key;
+    }
     
     public int getCarId() {
     	return carId;
@@ -52,7 +52,7 @@ public class Reservation extends Quote {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + carId;
+		result = (int)(prime * result + carId);
 		return result;
 	}
 

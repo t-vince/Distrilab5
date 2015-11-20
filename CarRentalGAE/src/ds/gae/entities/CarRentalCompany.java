@@ -17,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 import com.google.appengine.api.datastore.Key;
-import com.google.appengine.datanucleus.annotations.Unowned;
 
 import ds.gae.ReservationException;
 
@@ -30,14 +29,14 @@ public class CarRentalCompany {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Key key;
 	private String name;
-	@Unowned
-	@OneToMany(cascade = CascadeType.PERSIST)
+	
+	@OneToMany(cascade = CascadeType.ALL)
 	private Set<CarType> carTypes;
 
 	/***************
 	 * CONSTRUCTOR *
 	 ***************/
-
+	
 	public CarRentalCompany(String name, Set<CarType> cartypes) {
 		logger.log(Level.INFO, "<{0}> Car Rental Company {0} starting up...", name);
 		setName(name);

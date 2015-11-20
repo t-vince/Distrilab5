@@ -39,6 +39,10 @@ public class CarType {
         this.smokingAllowed = smokingAllowed;
     }
 
+    public Key getKey() {
+    	return this.key;
+    }
+    
     public String getName() {
     	return name;
     }

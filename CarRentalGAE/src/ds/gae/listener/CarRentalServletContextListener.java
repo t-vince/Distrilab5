@@ -10,12 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import ds.gae.CarRentalModel;
 import ds.gae.EMF;
 import ds.gae.entities.Car;
 import ds.gae.entities.CarRentalCompany;
@@ -23,6 +21,8 @@ import ds.gae.entities.CarType;
 
 public class CarRentalServletContextListener implements ServletContextListener {
 
+	private int id=1;
+	
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
 		// This will be invoked as part of a warming request, 
@@ -71,9 +71,8 @@ public class CarRentalServletContextListener implements ServletContextListener {
 	}
 	
 	
-	public static Set<CarType> loadData(String name, String datafile) throws NumberFormatException, IOException {
+	public Set<CarType> loadData(String name, String datafile) throws NumberFormatException, IOException {
 		Set<CarType> carTypes = new HashSet<CarType>();
-		int carId = 1;
 
 		//open file from jar
 		BufferedReader in = new BufferedReader(new InputStreamReader(CarRentalServletContextListener.class.getClassLoader().getResourceAsStream(datafile)));
@@ -96,7 +95,7 @@ public class CarRentalServletContextListener implements ServletContextListener {
 			carTypes.add(type);
 			//create N new cars with given type, where N is the 5th field
 			for (int i = Integer.parseInt(csvReader.nextToken()); i > 0; i--) {
-				type.addCar(new Car(carId++, type.getName()));
+				type.addCar(new Car(type.getName(), id++));
 			}
 		}
 

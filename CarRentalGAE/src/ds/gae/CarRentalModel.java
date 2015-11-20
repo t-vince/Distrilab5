@@ -246,15 +246,15 @@ public class CarRentalModel {
 	 * 			the given car type
 	 * @return	List of cars of the given car type
 	 */
-	private List<Car> getCarsByCarType(String crcName, CarType carType) {				
+	private List<Car> getCarsByCarType(String crcName, CarType carType) {
 		EntityManager em = EMF.get().createEntityManager();
-    	
-    	try {
-    		Query q = em.createQuery("SELECT c FROM Car c WHERE c.type = :type" )
-				.setParameter("type", carType.getName());
-			return q.getResultList();
-		}
-		finally {
+		try{
+			Query query = em.createQuery("SELECT t.cars FROM CarType t WHERE t.key = :key");
+			query.setParameter("key", carType.getKey());
+			Set<Car> res = (Set<Car>) query.getSingleResult();
+			List<Car> result = new ArrayList<Car>(res);
+			return result;
+		} finally {
 			em.close();
 		}
 	}

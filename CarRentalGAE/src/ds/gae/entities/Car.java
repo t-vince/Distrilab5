@@ -21,7 +21,6 @@ public class Car {
     
     private int id;
     
-    
     private String type;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Reservation> reservations;
@@ -30,26 +29,22 @@ public class Car {
      * CONSTRUCTOR *
      ***************/
     
-    public Car(int uid, String type) {
-    	this.id = uid;
+    public Car(String type, int id) {
         this.type = type;
         this.reservations = new HashSet<Reservation>();
+        this.id = id;
     }
 
-    /******
-     * KEY *
-     ******/
-    
-    public Key getKey() {
-    	return key;
-    }
-    
     /******
      * ID *
      ******/
     
     public int getId() {
     	return id;
+    }
+    
+    public Key getKey() {
+    	return key;
     }
     
     /************
